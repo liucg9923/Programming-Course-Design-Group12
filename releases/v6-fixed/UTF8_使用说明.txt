@@ -1,0 +1,15 @@
+本工程所有 .h / .cpp / .txt 文件均已按 UTF-8 编码保存。
+
+在 Visual Studio 中还需要做两件事：
+1. 项目属性 -> C/C++ -> 命令行 -> 附加选项，加入 /utf-8
+2. 重新生成整个解决方案
+
+main.cpp 已在 Windows 下执行：
+- chcp 65001
+- SetConsoleOutputCP(65001)
+- SetConsoleCP(65001)
+- setlocale(LC_ALL, ".65001")
+
+如果你是直接替换到现有工程：
+- 请把旧的 exe 删除后再重新生成
+- 请确认 VS 中文件本身不是 ANSI/GBK 保存

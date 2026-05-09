@@ -1,0 +1,5 @@
+doctor.txt 100 行
+medicine.txt 100 行
+patient.txt 100 行
+record.txt 100 行
+README.txt 为字段说明文件，不是业务记录表

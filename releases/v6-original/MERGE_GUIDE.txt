@@ -1,0 +1,6 @@
+1. 头文件中保留 global.h / outpatient_inpatient.h / module_d.h / pharmacy.h / ward.h
+2. 源文件中加入 common.cpp / register.cpp / see_doctor.cpp / billing.cpp / module_d_persist.cpp / module_d_search.cpp / pharmacy.cpp / ward.cpp / main.cpp
+3. 删除旧工程里基于数组实现的同名全局变量和桩函数，避免重定义
+4. 本工程已经统一为链表实现，outpatient_inpatient.h 不再重复定义结构体，只是 include global.h
+5. 住院押金存放在 InpatientNode 中，不与 PatientNode.balanceCents 混用
+6. StatisticModule() 已在 main.cpp 中补完

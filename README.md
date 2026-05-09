@@ -10,58 +10,63 @@
 
 | 成员 | 占比 | 负责模块 | 核心交付物 |
 |------|------|---------|-----------|
-| **钟佳凌**（组长） | 20% | 公共底层、项目规范、初始化、统计报表、联调验收 | `global.h`、`main.c`、`initSystemData`、`StatisticModule` |
-| **刘承庚** | 30% | 门诊主流程 + 住院收费主流程 | `RegisterPatient`、`SeeDoctor`、`ProcessBilling` |
-| **谢欣材** | 25% | 药房管理 + 病房/床位管理 | `PharmacyManagement`、`ShowWardStatus` |
-| **周溢程** | 25% | 数据持久化、综合查询、软删除、日志 | `LoadAllData`、`SaveAllData`、`SearchModule` |
+| **钟佳凌**（组长） | 20% | 公共底层、项目规范、初始化、统计报表、联调验收 | `global.h`、`common.cpp`、`main.cpp`、`StatisticModule()` |
+| **刘承庚** | 30% | 门诊主流程 + 住院收费主流程 | `RegisterPatient()`、`SeeDoctor()`、`ProcessBilling()` |
+| **谢欣材** | 25% | 药房管理 + 病房/床位管理 | `PharmacyManagement()`、`ShowWardStatus()` |
+| **周溢程** | 25% | 数据持久化、综合查询、软删除、日志 | `LoadAllData()`、`SaveAllData()`、`SearchModule()`、`DeleteRecord()` |
 
 ---
 
-## 📁 仓库目录结构
+## 📁 仓库结构
 
 ```
 .
-├── README.md                     # 本文件
-├── .gitignore                    # 忽略编译产物 / IDE 临时文件
-├── docs/                         # 项目文档
-│   ├── Programming-Design-Requirements-2025.pdf   # 课程设计要求（学校发的）
-│   ├── Group12-HIS-Assignment.docx                # 第12组自拟题签
-│   ├── Naming-Convention.rtf                      # 命名规范参考
-│   └── Integration-Checklist.md                   # 联调对齐清单（⭐必读）
-├── data/                         # 原始测试数据（联调/答辩用）
-│   ├── doctor.txt                100 条医生数据
-│   ├── patient.txt               100 条患者数据
-│   ├── medicine.txt              100 条药品数据
-│   ├── record.txt                100 条诊疗记录
-│   └── README.txt                数据字段说明
-├── src/                          # 源代码（各成员按模块提交）
-│   ├── liu-chenggeng/            刘承庚的本地实现（联调前独立版本）
-│   ├── (zhong-jialing/)          ← 队长待建
-│   ├── (xie-xincai/)             ← 谢欣材待建
-│   └── (zhou-yicheng/)           ← 周溢程待建
-└── reference/                    # 参考资料 / 早期版本留档
-    └── team-leader-init/         队长的早期初始化代码（global.h 草稿 + main.cpp）
+├── README.md                  本文件
+├── CONTRIBUTING.md            协作指南
+├── docs/                      项目文档
+│   ├── 总结报告.doc                   ⭐ 课程设计总结报告（最终提交版）
+│   ├── 总结报告_评审意见.pdf          报告审稿意见
+│   ├── Group12-HIS-Assignment.docx    第 12 组题签
+│   ├── Programming-Design-Requirements-2025.pdf  课程要求
+│   ├── Naming-Convention.rtf          命名规范
+│   └── Integration-Checklist.md       联调对齐清单
+├── reports/                   Bug 报告与迭代记录
+│   ├── V6-Bug报告.pdf                 ⭐ 最新版 Bug 评审（13 项问题 + 修复方案）
+│   ├── 总结报告_评审意见.pdf          报告审稿意见
+│   ├── V5-CHANGELOG.md
+│   ├── V3-修复CHANGELOG.md
+│   └── V2-CHANGELOG.md
+├── releases/                  版本归档
+│   ├── v6-fixed/             ⭐ V6 修复版（推荐使用 / 答辩用）
+│   ├── v6-original/          V6 队长原始版（含全部 Bug，仅作对照）
+│   ├── v7-original/          V7 队长最新版（待审查）
+│   ├── v0-array-version/     V0 队长最初的数组实现（已废弃，留作设计演进对照）
+│   └── early-impl/           4-22 早期独立实现（链表 + 完整三模块）
+└── data/                      原始测试数据
+    ├── doctor.txt             100 名医生
+    ├── patient.txt            100 名患者
+    ├── medicine.txt           100 种药品
+    ├── record.txt             100 条诊疗记录
+    └── README.txt             字段说明
 ```
 
 ---
 
-## 🛠 编译运行
+## 🚀 快速开始（推荐使用 `releases/v6-fixed`）
 
-### 刘承庚模块（独立测试版）
+### Windows + Visual Studio
+
+1. 双击 `releases/v6-fixed/HIS_4.vcxproj`
+2. 项目属性 → C/C++ → 命令行 → 附加选项加 `/utf-8`
+3. `Ctrl + F5` 运行
+
+### Windows MinGW / Dev-C++ / macOS / Linux
 
 ```bash
-cd src/liu-chenggeng
-# Windows / Mac / Linux 通用
-gcc -Wall -o his main.c global.c register.c see_doctor.c billing.c
-
-# 运行
-./his              # Mac / Linux
-his.exe            # Windows
+cd releases/v6-fixed
+g++ -Wall -Wno-deprecated-declarations -o his *.cpp
+./his
 ```
-
-### 联调版（待队长 `global.h` 定稿后）
-
-届时由队长提供统一 `Makefile` 或 VS 项目文件。
 
 ---
 
@@ -88,99 +93,69 @@ his.exe            # Windows
 - 病房类型：普通 / 重症 / VIP
 
 ### 修改与删除
-- 记录修改不得直接覆盖 → **原记录红冲 + 新增正确记录**
-- 删除采用软删除（`is_deleted=1`），不物理移除
-
-### 文件容错
-- 读取文件时发现坏行 → 跳过 + 记录错误日志 + 其余正确数据继续读取
+- 记录修改：**原记录红冲 + 新增正确记录**（红冲后回滚财务和库存）
+- 删除采用**软删除**（`is_deleted=1`）
 
 ### 金额存储
-- **全部使用"分"作为最小单位**（`long long` 类型）
-- 避免浮点精度丢失
+- 全部使用 **`long long` 分** 存储，避免浮点精度损失
 
 ---
 
-## 🗂 数据结构约定
+## 🗂 V6 修复版 vs 原始版差异
 
-> 以队长 `reference/team-leader-init/global.h` 为最终权威版本。
-> 联调前请阅读 [`docs/Integration-Checklist.md`](docs/Integration-Checklist.md) 对齐字段。
+V6 修复版相对队长 V6 原始版修复了 **13 项问题**（详见 `reports/V6-Bug报告.pdf`）：
 
-核心结构体：
-- `Doctor` — 医生
-- `Patient` — 患者
-- `Medicine` — 药品
-- `MedicalRecord` — 诊疗记录（type: 1挂号/2看诊/3检查/4开药/5住院）
-- `WardBed` — 病房床位
-- `Department` — 科室
+| 严重度 | 数量 | 主要问题 |
+|--------|------|---------|
+| 严重 | 1 | 更正 VISIT 类型记录会污染输入流 |
+| 中等 | 4 | 每日扣费/出院补扣冲突；跨日不补扣；充值后跳主菜单；押金不足直接拒绝 |
+| 业务一致性 | 3 | 现金补缴无审计；30 名住院数据缺失；库存预警阈值过低 |
+| 设计层面 | 5 | 按钮文案/macOS 路径/type 校验/菜单返回数字/软删除恢复 |
+
+修复版同时：
+- 预生成 30 条住院数据（满足题签要求）
+- 所有子菜单"返回上级"统一为 `0`
+- 内置 `screenshot.sh` / `screenshot.exp` 自动化截图脚本
 
 ---
 
-## 🌿 协作分支策略
+## 📅 版本演进概览
 
-### 主要分支
+| 版本 | 时间 | 关键变化 |
+|------|------|---------|
+| V0（数组版） | 4 月初 | 队长最早的数组实现（违反题签"全程链表"要求，已废弃） |
+| 早期独立实现 | 4-22 | 刘承庚的链表版三模块原型 |
+| V1 ~ V5 | 4-23 ~ 5-3 | 多轮迭代，逐步合并各成员模块、修复 Bug |
+| V6 (原始) | 5-2 | 队长打包提交，含 13 项遗留 Bug |
+| **V6 (修复)** | **5-8** | **修复全部 13 项 Bug，预生成住院数据，菜单统一** |
+| V7 (原始) | 5-9 | 队长最新一版，待审查 |
 
-| 分支 | 用途 |
-|------|------|
-| `main` | 稳定主分支，**禁止直接 push**，通过 Pull Request 合入 |
-| `dev/zhong-jialing` | 队长开发分支 |
-| `dev/liu-chenggeng` | 刘承庚开发分支 |
-| `dev/xie-xincai` | 谢欣材开发分支 |
-| `dev/zhou-yicheng` | 周溢程开发分支 |
-| `integration` | 联调分支，联调时所有人合入这里 |
+---
 
-### 标准工作流
+## 🚨 学术诚信
+
+题签明确写了：
+
+> **题签雷同可直接认定为作弊。**
+
+因此：
+- ✅ 允许：组内讨论思路、共享结构体定义、互相 review 代码
+- ❌ 不允许：把本仓库代码分享给其他组 / 同年级其他同学
+- ❌ 不允许：直接使用网上或其他组的代码片段（抄袭检测）
+
+**答辩前后建议把仓库改为 Private**：
 
 ```bash
-# 1. 克隆仓库（首次）
-git clone https://github.com/<队长用户名>/Programming-Course-Design-Group12.git
-cd Programming-Course-Design-Group12
-
-# 2. 切到自己的分支
-git checkout dev/liu-chenggeng   # 换成自己的名字
-
-# 3. 开始写代码，随时提交
-git add .
-git commit -m "实现挂号限制校验"
-git push origin dev/liu-chenggeng
-
-# 4. 从 main 拉取最新（定期同步队长最新的 global.h）
-git fetch origin
-git merge origin/main
-
-# 5. 功能完成后，在 GitHub 网页上发 Pull Request 合入 integration
+gh repo edit liucg9923/Programming-Course-Design-Group12 --visibility private --accept-visibility-change-consequences
 ```
 
 ---
 
-## 🚨 重要约定（作弊警示）
+## 📞 联系
 
-题签明确写了：
-> **题签雷同可直接认定为作弊。**
-
-因此：
-- ✅ 讨论思路、共享结构体定义、互相 review 代码 — **允许**
-- ❌ 不允许把本仓库代码分享给其他组 / 同年级其他同学
-- ❌ 不允许直接使用网上或其他组的代码片段（抄袭检测）
+- 组长：钟佳凌
+- 答辩日期：2026-05-17（拟）
 
 ---
 
-## 📅 进度节点
-
-| 节点 | 任务 | 状态 |
-|------|------|------|
-| 第 1 次实验课 | 教师发布题目 | ✅ |
-| 第 2~3 次实验课 | 组内分工、讨论题签、提交纸质题签 | ✅ |
-| 中期 | 进度检查 | ⏳ |
-| 最后 2 次实验课 | 代码检查 + 答辩 + 提交总结报告 | ⏳ |
-
----
-
-## 🔗 联系方式
-
-群聊：第 12 组 QQ / 微信群
-
-**有问题优先在 GitHub Issue 里讨论，保留记录方便答辩时展示。**
-
----
-
-*仓库由 Claude Code 辅助搭建（2026-04-23）*
+*最后更新：2026-05-09*
